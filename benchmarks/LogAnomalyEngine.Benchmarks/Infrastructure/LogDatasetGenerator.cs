@@ -31,4 +31,39 @@ internal static class LogDatasetGenerator
 
         return data;
     }
+
+    public static byte[] CreateFixedWidth(
+        int targetSize,
+        int lineLength)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(targetSize);
+
+        if (lineLength < 2)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(lineLength),
+                "Line length must be at least two bytes.");
+        }
+
+        var lineCount = targetSize / lineLength;
+
+        if (lineCount == 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(targetSize),
+                "Target size must be large enough to contain at least one line.");
+        }
+
+        var data = new byte[lineCount * lineLength];
+
+        for (var offset = 0; offset < data.Length; offset += lineLength)
+        {
+            data.AsSpan(offset, lineLength - 1)
+                .Fill((byte)'A');
+
+            data[offset + lineLength - 1] = (byte)'\n';
+        }
+
+        return data;
+    }
 }
