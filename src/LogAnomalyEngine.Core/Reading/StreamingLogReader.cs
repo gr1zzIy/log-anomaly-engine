@@ -49,9 +49,7 @@ public static class StreamingLogReader
                 {
                     if (bufferedCount > 0)
                     {
-                        handler(TrimCarriageReturn(
-                            buffer.AsSpan(0, bufferedCount)));
-
+                        handler(buffer.AsSpan(0, bufferedCount));
                         lineCount++;
                     }
 
