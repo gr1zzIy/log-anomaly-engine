@@ -65,7 +65,11 @@ public static class StreamingLogReader
 
                 while (true)
                 {
-                    var lineFeedIndex = ScalarLineScanner.FindNextLineFeed(
+                    //var lineFeedIndex = ScalarLineScanner.FindNextLineFeed(
+                    //    buffer.AsSpan(0, availableCount),
+                    //    searchStart);
+
+                    var lineFeedIndex = RuntimeLineScanner.FindNextLineFeed(
                         buffer.AsSpan(0, availableCount),
                         searchStart);
 
