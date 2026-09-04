@@ -121,7 +121,7 @@ GitHub-hosted CI runners are used for correctness and compatibility checks, not 
 
 ## Development roadmap
 
-### M0 — Engineering Foundation
+### M0 - Engineering Foundation
 - solution structure;
 - tests;
 - benchmarks;
@@ -130,60 +130,60 @@ GitHub-hosted CI runners are used for correctness and compatibility checks, not 
 - cross-platform CI;
 - initial documentation.
 
-### M1 — High-Speed Log Reader
+### M1 - High-Speed Log Reader
 - streaming input;
 - scalar baseline;
 - chunk-boundary handling;
 - pooled buffers;
 - throughput benchmarks.
 
-### M2 — SIMD Parser
+### M2 - SIMD Parser
 - scalar reference implementation;
 - vectorized delimiter scanning;
 - Vector128/Vector256/Vector512 where appropriate;
 - benchmark comparison.
 
-### M3 — Structured Event Pipeline
+### M3 - Structured Event Pipeline
 - timestamps;
 - log levels;
 - sources;
 - message extraction;
 - template representation.
 
-### M4 — Statistical Anomaly Detection
+### M4 - Statistical Anomaly Detection
 - online statistics;
 - frequency anomalies;
 - unseen-event detection;
 - temporal anomaly scoring.
 
-### M5 — Semantic Anomaly Detection
+### M5 - Semantic Anomaly Detection
 - embeddings;
 - vector similarity;
 - candidate analysis;
 - semantic anomaly score.
 
-### M6 — Hybrid Detection Engine
+### M6 - Hybrid Detection Engine
 - fast path;
 - semantic slow path;
 - combined scoring;
 - threshold calibration;
 - ablation experiments.
 
-### M7 — Production CLI
+### M7 - Production CLI
 - files and stdin;
 - filtering;
 - terminal output;
 - JSON output;
 - Native AOT release binaries.
 
-### M8 — Research Evaluation
+### M8 - Research Evaluation
 - datasets;
 - baseline methods;
 - reproducible experiments;
 - performance and ML metrics;
 - statistical analysis.
 
-### M9 — Thesis Release
+### M9 - Thesis Release
 - stable implementation;
 - reproducible results;
 - final technical documentation;

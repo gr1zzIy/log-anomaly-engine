@@ -28,3 +28,6 @@ dotnet_style_prefer_object_initializer = true:suggestion
 dotnet_style_prefer_collection_expression = true:suggestion
 
 #dotnet_diagnostic.IDE0005.severity = warning
+
+[tests/**/*.cs]
+dotnet_diagnostic.CA1707.severity = none
