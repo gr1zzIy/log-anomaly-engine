@@ -1,7 +1,7 @@
 ﻿using System.Text;
-using System.Buffers;
 using BenchmarkDotNet.Attributes;
 using LogAnomalyEngine.Core.Reading;
+using LogAnomalyEngine.Benchmarks.Infrastructure;
 
 namespace LogAnomalyEngine.Benchmarks.Reading;
 
@@ -20,7 +20,7 @@ public class StreamingLogReaderBenchmarks : IDisposable
     [GlobalSetup]
     public void Setup()
     {
-        var data = CreateDataset(DatasetSize);
+        var data = LogDatasetGenerator.Create(DatasetSize);
         _stream = new MemoryStream(data, writable: false);
     }
 
@@ -45,22 +45,5 @@ public class StreamingLogReaderBenchmarks : IDisposable
     {
         _stream?.Dispose();
         GC.SuppressFinalize(this);
-    }
-
-    private static byte[] CreateDataset(int targetSize)
-    {
-        const string line =
-            "2026-09-04T10:15:30.123Z INFO OrderService Request completed successfully id=123456 duration=42ms\n";
-
-        var lineBytes = Encoding.UTF8.GetBytes(line);
-        var lineCount = targetSize / lineBytes.Length;
-        var data = new byte[lineCount * lineBytes.Length];
-
-        for (var offset = 0; offset < data.Length; offset += lineBytes.Length)
-        {
-            lineBytes.CopyTo(data, offset);
-        }
-
-        return data;
     }
 }
