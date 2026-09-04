@@ -40,6 +40,10 @@ public static class StreamingLogReader
                     GrowBuffer(ref buffer, ref capacity, bufferedCount);
                 }
 
+                // Перенесений фрагмент уже був повністю просканований у попередній
+                // ітерації, тому новий пошук можна починати з першого нового байта.
+                var searchStart = bufferedCount;
+
                 var bytesRead = stream.Read(
                     buffer.AsSpan(
                         bufferedCount,
@@ -63,7 +67,7 @@ public static class StreamingLogReader
                 {
                     var lineFeedIndex = ScalarLineScanner.FindNextLineFeed(
                         buffer.AsSpan(0, availableCount),
-                        lineStart);
+                        searchStart);
 
                     if (lineFeedIndex < 0)
                     {
@@ -78,6 +82,7 @@ public static class StreamingLogReader
                     lineCount++;
 
                     lineStart = lineFeedIndex + 1;
+                    searchStart = lineStart;
                 }
 
                 bufferedCount = availableCount - lineStart;
