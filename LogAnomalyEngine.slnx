@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/benchmarks/">
+    <Project Path="benchmarks/LogAnomalyEngine.Benchmarks/LogAnomalyEngine.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/LogAnomalyEngine.Cli/LogAnomalyEngine.Cli.csproj" />
+    <Project Path="src/LogAnomalyEngine.Core/LogAnomalyEngine.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/LogAnomalyEngine.Tests/LogAnomalyEngine.Tests.csproj" />
+  </Folder>
+</Solution>
