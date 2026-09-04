@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using LogAnomalyEngine.Core.Reading;
+using LogAnomalyEngine.Tests.TestInfrastructure;
 
 namespace LogAnomalyEngine.Tests.Reading;
 
@@ -184,6 +185,118 @@ public sealed class StreamingLogReaderTests
                 _ => throw new InvalidOperationException("Test failure")));
 
         Assert.Equal("Test failure", exception.Message);
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    public void ReadLines_StreamReturnsPartialReads_ReconstructsAllLines(
+        int maxBytesPerRead)
+    {
+        var data = Encoding.UTF8.GetBytes(
+            "INFO first\nWARN second\nERROR third");
+
+        using var stream = new ChunkedReadStream(
+            data,
+            maxBytesPerRead);
+
+        var lines = ReadAllLines(
+            stream,
+            bufferSize: 16);
+
+        Assert.Equal(
+            [
+                "INFO first",
+                "WARN second",
+                "ERROR third"
+            ],
+            lines);
+    }
+
+    [Fact]
+    public void ReadLines_CrlfSplitAcrossReads_NormalizesLineEnding()
+    {
+        var data = Encoding.UTF8.GetBytes(
+            "INFO first\r\nWARN second\r\n");
+
+        using var stream = new ChunkedReadStream(
+            data,
+            maxBytesPerRead: 11);
+
+        var lines = ReadAllLines(
+            stream,
+            bufferSize: 16);
+
+        Assert.Equal(
+            [
+                "INFO first",
+                "WARN second"
+            ],
+            lines);
+    }
+
+    [Fact]
+    public void ReadLines_UnterminatedLineEndingWithCarriageReturn_PreservesCarriageReturn()
+    {
+        using var stream = CreateStream("INFO started\r");
+
+        var lines = ReadAllLines(stream);
+
+        Assert.Equal(
+            ["INFO started\r"],
+            lines);
+    }
+
+    [Fact]
+    public void ReadLines_InputContainsOnlyLineFeeds_PreservesEmptyLines()
+    {
+        using var stream = CreateStream("\n\n\n");
+
+        var lines = ReadAllLines(stream);
+
+        Assert.Equal(
+            [
+                string.Empty,
+                string.Empty,
+                string.Empty
+            ],
+            lines);
+    }
+
+    [Fact]
+    public void ReadLines_LineRequiresMultipleBufferGrowths_ReconstructsLine()
+    {
+        var longLine = new string('A', 1024);
+
+        using var stream = CreateStream(
+            $"{longLine}\nINFO next");
+
+        var lines = ReadAllLines(
+            stream,
+            bufferSize: 8);
+
+        Assert.Equal(
+            [
+                longLine,
+                "INFO next"
+            ],
+            lines);
+    }
+
+    [Fact]
+    public void ReadLines_StreamReadThrows_PropagatesException()
+    {
+        using var stream = new ThrowingReadStream();
+
+        var exception = Assert.Throws<IOException>(
+            () => StreamingLogReader.ReadLines(
+                stream,
+                _ => { }));
+
+        Assert.Equal(
+            "Simulated read failure.",
+            exception.Message);
     }
 
     private static List<string> ReadAllLines(
