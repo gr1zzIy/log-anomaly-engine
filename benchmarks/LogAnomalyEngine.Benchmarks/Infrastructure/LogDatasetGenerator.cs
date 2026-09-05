@@ -66,4 +66,50 @@ internal static class LogDatasetGenerator
 
         return data;
     }
+
+    public static byte[] CreateStructuredFixedWidth(
+        int targetSize,
+        int lineLength)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(targetSize);
+
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(lineLength);
+
+        if (targetSize % lineLength != 0)
+        {
+            throw new ArgumentException(
+                "Target size must be divisible by line length.",
+                nameof(targetSize));
+        }
+
+        ReadOnlySpan<byte> prefix =
+            "2026-09-05T20:00:00Z INFO PaymentService "u8;
+
+        if (lineLength <= prefix.Length + 1)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(lineLength),
+                "Line length must leave room for a message and LF delimiter.");
+        }
+
+        var data = new byte[targetSize];
+
+        for (var offset = 0;
+             offset < data.Length;
+             offset += lineLength)
+        {
+            var line = data.AsSpan(offset, lineLength);
+
+            prefix.CopyTo(line);
+
+            line.Slice(
+                    prefix.Length,
+                    lineLength - prefix.Length - 1)
+                .Fill((byte)'A');
+
+            line[^1] = (byte)'\n';
+        }
+
+        return data;
+    }
 }
